@@ -1,3 +1,6 @@
+
+
+
 class Request:
 
     def __init__(self, request: bytes):
@@ -9,6 +12,33 @@ class Request:
         self.http_version = ""
         self.headers = {}
         self.cookies = {}
+
+        prev, self.body = request.split(b"\r\n\r\n", 1)
+        prev = prev.decode("utf-8")
+
+        #short term, need to parse all headers regardless
+        lines = prev.split("\r\n")
+        i = 0
+        for line in lines:
+            i = i + 1
+            if i == 1:
+                self.method, self.path, self.http_version = line.split(" ", 2)
+                continue
+
+            key, value = line.split(":", 1)
+            key = key.strip()
+            value = value.strip()
+
+            if key == "Cookie":
+                cookies = line.split(";")
+                for cookie in cookies:
+                    name, cook = cookie.split("=")
+                    name = name.split()
+                    cook = cook.split()
+                    self.cookies[name] = cook
+
+            self.headers[key] = value
+
 
 
 def test1():
@@ -23,6 +53,9 @@ def test1():
     # It's recommended that you complete this test and add others, including at least one
     # test using a POST request. Also, ensure that the types of all values are correct
 
+    print("passed all tests")
+
 
 if __name__ == '__main__':
     test1()
+
