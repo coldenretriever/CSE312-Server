@@ -4,21 +4,32 @@ from util.response import Response
 def host_path(request, handler):
     res = Response()
     path = request.path
-    print("\n\n" + path + "\n")
-    with open(path, "rb") as f:
-        file_bytes = f.read()
-    res.bytes(file_bytes)
+    if path == "/":
+        path = "public/index.html"
+    try:
+        print(path)
+        with open(path, "rb") as f:
+            file_bytes = f.read()
+        res.bytes(file_bytes)
+    except FileNotFoundError:(
+        print("file not found"))
+
+
 
     if path.__contains__("html"):
-        res.headers["Content-Type"] = "text/html"
+        res.head["Content-Type"] = "text/html"
     elif path.__contains__(".js"):
-        res.headers["Content-Type"] = "text/javascript"
+        res.head["Content-Type"] = "text/javascript"
     elif path.__contains__(".jpg"):
-        res.headers["Content-Type"] = "image/jpeg"
+        res.head["Content-Type"] = "image/jpeg"
     elif path.__contains__(".ico"):
-        res.headers["Content-Type"] = "image/x-icon"
-    elif path.__contains(".webp"):
-        res.headers["Content-Type"] = "image/webp"
+        res.head["Content-Type"] = "image/x-icon"
+    elif path.__contains__(".webp"):
+        res.head["Content-Type"] = "image/webp"
+    elif path.__contains__(".gif"):
+        res.head["Content-Type"] = "image/gif"
+    elif path.__contains__(".json"):
+        res.head["Content-Type"] = "application/json"
 
 
 
