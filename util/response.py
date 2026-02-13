@@ -118,6 +118,8 @@ def test2():
     res.text("test 123")
     res.set_status(67, "41")
     res.headers({"a":"b", "c":"d"})
+    res.headers({"e":"f", "g":"h"})
+
     res.cookies({"a":"b", "c":"d"})
     #res.json(["1", "2", "3"])
     res.cookies({"a":"c"})
@@ -147,7 +149,7 @@ def test_overwrite():
 
 def test_cookies():
     res = Response()
-    res.cookies({})
+    res.cookies({"Is":"there", "a":"space"})
     print(res.to_data())
 
 if __name__ == '__main__':

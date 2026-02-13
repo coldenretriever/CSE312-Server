@@ -1,7 +1,6 @@
 from util.response import Response
 
 
-# This path is provided as an example of how to use the router
 def long_path(request, handler):
     print("Got there!")
     res = Response()

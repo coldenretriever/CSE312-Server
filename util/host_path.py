@@ -1,11 +1,11 @@
 from util.response import Response
 
 
-# This path is provided as an example of how to use the router
 def host_path(request, handler):
     res = Response()
     path = request.path
-    with open(request.path, "rb") as f:
+    print("\n\n" + path + "\n")
+    with open(path, "rb") as f:
         file_bytes = f.read()
     res.bytes(file_bytes)
 
