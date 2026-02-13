@@ -5,15 +5,21 @@ class Router:
 
     def __init__(self):
         self.routes = {}
-        self.funcs = {}
-
 
     def add_route(self, method, path, action, exact_path=False):
-        self.routes[(method, path)] = action
-
+        self.routes[(method, path)] = {"action": action, "exact_path": exact_path}
+        #how do I want to store the paths so it can be compared?
 
     def route_request(self, request, handler):
-        if self.routes.keys().__contains__((request.http_version, request.path)):
-            self.routes[(request.http_version, request.path)](request, handler)
-        else:
+
+        #Loop through all in dictionary I think
+        #compare path to keys with startswith
+
+        fail = True
+        for key in self.routes.keys():
+            if key[0] == request.method and (key[1] == request.path or key[1].startswith(request.path)):
+                self.routes[key](request, handler)
+                fail = False
+
+        if fail:
             handler.request.sendall("404 Not Found")
