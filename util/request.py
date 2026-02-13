@@ -30,12 +30,13 @@ class Request:
             value = value.strip()
 
             if key == "Cookie":
-                cookies = line.split(";")
+                cookieName, unsplit = line.split(":")
+                cookies = unsplit.split(";")
                 for cookie in cookies:
                     name, cook = cookie.split("=")
                     name = name.split()
                     cook = cook.split()
-                    self.cookies[name] = cook
+                    self.cookies[name[0]] = cook[0]
 
             self.headers[key] = value
 
@@ -55,7 +56,22 @@ def test1():
 
     print("passed all tests")
 
+def test2():
+    request = Request(b'POST /path HTTP/1.1\r\nContent-Type: text/plain\r\nContent-Length: 5\r\n\r\nhello')
+    assert request.method == "POST"
+    assert "Content-Type" in request.headers
+    assert request.headers["Content-Length"] == "5"  # note: The leading space in the header value must be removed
+    assert request.body == b"hello"  # There is no body for this request.
+
+def test_cookies():
+    request = Request(b'POST /path HTTP/1.1\r\nContent-Type: text/plain\r\nContent-Length: 5\r\nCookie: id=X6kAwpgW29M; SameSite=Lax\r\n\r\nhello')
+    assert request.method == "POST"
+    assert "Cookie" in request.headers
+    assert request.headers["Content-Length"] == "5"  # note: The leading space in the header value must be removed
+    assert request.body == b"hello"  # There is no body for this request.
 
 if __name__ == '__main__':
     test1()
+    test2()
+    test_cookies()
 
