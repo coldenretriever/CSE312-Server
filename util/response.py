@@ -10,9 +10,10 @@ class Response:
         self.status_code = 200
         self.status_message = "OK"
         self.head = {}
-        self.body : bytes = b""
+        self.body = b""
 
         self.head["Content-Type"] = "hasn't been set"
+        self.cookie_yet = False
 
 
     def set_status(self, code, text):
@@ -27,12 +28,18 @@ class Response:
 
 
     def cookies(self, cookies):
-        self.head["Set-Cookie"] = ""
-        for key in list(cookies.keys):
-            self.head["Set-Cookie"] = (self.head["Set-Cookie"]
-                                       + key + "=" + cookies[key] + ";")
+        runs = False
+        if not self.cookie_yet:
+            self.head["Set-Cookie"] = ""
 
-        self.head["Set-Cookie"] = self.head["Set-Cookie"][:len(self.head["Set-Cookie"]) - 1]
+        for key in list(cookies.keys()):
+            runs = True
+            if self.cookie_yet:
+                self.head["Set-Cookie"] = self.head["Set-Cookie"] + "; "
+
+            self.head["Set-Cookie"] = (self.head["Set-Cookie"] + key + "=" + cookies[key])
+            self.cookie_yet = True
+
         return self
 
     def bytes(self, data):
@@ -99,7 +106,20 @@ def test1():
         print("failed")
         print(actual)
 
+def test2():
+    res = Response()
+    res.text("test 123")
+    res.set_status(67, "41")
+    res.cookies({"a":"b", "c":"d"})
+    res.cookies({"a":"c"})
+    res.bytes(b"should be last")
+    expected = b'HTTP/1.1 67 "41"\r\nContent-Type: text/plain; charset=utf-8\r\nContent-Length: 5\r\n\r\nhello'
+    actual = res.to_data()
+    if actual != expected:
+        print("failed")
+        print(actual)
 
 if __name__ == '__main__':
     test1()
+    test2()
 

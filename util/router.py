@@ -12,6 +12,8 @@ class Router:
         #Loop through all in dictionary I think
         #compare path to keys with startswith
 
+
+        #HAVE TO ADD EXACT PATH CONDITION
         fail = True
         for key in self.routes.keys():
             if key[0] == request.method and (key[1] == request.path or key[1].startswith(request.path)):
