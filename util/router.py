@@ -17,6 +17,7 @@ class Router:
             if key[0] == request.method and (key[1] == request.path or key[1].startswith(request.path)):
                 self.routes[key](request, handler)
                 fail = False
+                break
 
         if fail:
             handler.request.sendall("404 Not Found")
