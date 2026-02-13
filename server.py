@@ -1,4 +1,6 @@
 import socketserver
+
+from util.long_path import long_path
 from util.request import Request
 from util.router import Router
 from util.hello_path import hello_path
@@ -10,6 +12,7 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
         self.router = Router()
         self.router.add_route("GET", "/hello", hello_path, True)
         # TODO: Add your routes here
+        self.router.add_route("GET", "/hello", long_path, False)
         super().__init__(request, client_address, server)
 
     def handle(self):

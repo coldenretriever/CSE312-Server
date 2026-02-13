@@ -19,11 +19,14 @@ class Router:
         #HAVE TO ADD EXACT PATH CONDITION
         fail = True
         for key in self.routes.keys():
-            if key[0] == request.method and (key[1] == request.path or key[1].startswith(request.path)):
+
+            if key[0] == request.method and (key[1] == request.path or (key[1].startswith(request.path))):# and self.routes[key]["exact_path"] == False)):
+                print("key: " + key[0] + " path " + key[1])
                 func = self.routes[key]["action"]
                 func(request, handler)
-                fail = False
-                break
+                return
 
-        if fail:
-            handler.request.sendall(b"HTTP/1.1 404 NotFound\r\nContent-Type: text/plain\r\nContent-Length: 36\r\n\r\nThe requested content does not exist")
+        res = Response()
+        res.set_status(404, "Not Found")
+        res.text("The requested content does not exist")
+        handler.request.sendall(res.to_data())
