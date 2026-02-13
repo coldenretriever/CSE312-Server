@@ -1,6 +1,3 @@
-from idlelib.rpc import request_queue
-
-
 class Router:
 
     def __init__(self):
