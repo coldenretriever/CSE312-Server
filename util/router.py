@@ -17,7 +17,8 @@ class Router:
         fail = True
         for key in self.routes.keys():
             if key[0] == request.method and (key[1] == request.path or key[1].startswith(request.path)):
-                self.routes[key](request, handler)
+                func = self.routes[key]
+                func(request, handler)
                 fail = False
                 break
 

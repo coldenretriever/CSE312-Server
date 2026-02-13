@@ -28,12 +28,10 @@ class Response:
 
 
     def cookies(self, cookies):
-        runs = False
         if not self.cookie_yet:
-            self.head["Set-Cookie"] = ""
+            self.head["Set-Cookie"] = " "
 
         for key in list(cookies.keys()):
-            runs = True
             if self.cookie_yet:
                 self.head["Set-Cookie"] = self.head["Set-Cookie"] + "; "
 
