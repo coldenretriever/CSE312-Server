@@ -13,6 +13,7 @@ class Response:
         self.body = b""
 
         self.head["Content-Type"] = "text/plain; charset=utf-8"
+        self.head["X-Content-Type-Options"] = "nosniff"
         self.cookie_yet = False
 
 
@@ -80,18 +81,27 @@ class Response:
         for key in list(self.head.keys()):
 
             if isinstance(key, str) and isinstance(self.head[key], str):
-                dat = dat + key.encode("utf-8") + b":" + self.head[key].encode("utf-8") + b"\r\n"
+                dat = dat + key.encode("utf-8") + b": " + self.head[key].encode("utf-8") + b"\r\n"
         #need to add
         #   Content-Length
         #   No-Sniff
-        dat = dat + b"X-Content-Type-Options: nosniff" + b"\r\n"
-
         if isinstance(str(len(self.body)), str):
             dat = dat + b"Content-Length: " + str(len(self.body.decode("utf-8"))).encode("utf-8") + b"\r\n"
         dat = dat + b"\r\n"
         dat = dat + self.body
 
         return dat
+
+
+
+
+
+
+
+
+
+
+
 
 
 def test1():
