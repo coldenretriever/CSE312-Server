@@ -29,15 +29,10 @@ class Response:
 
 
     def cookies(self, cookies):
-        cookie_yet = False
-        entry = ""
         for key in list(cookies.keys()):
-            if cookie_yet:
-                entry = entry + "; "
-
+            entry = ""
             entry = entry + key + "=" + cookies[key]
-            cookie_yet = True
-        self.cookList.append(entry)
+            self.cookList.append(entry)
         return self
 
     def bytes(self, data):
@@ -80,11 +75,6 @@ class Response:
         data = data.__add__(self.body)
 
         return data
-
-
-
-
-
 
 
 
@@ -162,7 +152,7 @@ def test_final():
     assert actual.__contains__(b"Banana: Sprinkled Donut\r\n")
     assert actual.__contains__(b"supercalifragilistic")
     assert actual.__contains__(b"hello y'all")
-    assert actual.__contains__(b"Set-Cookie: cookie1=des1; 2222cookies=GOODCOOKIE\r\nSet-Cookie: cookie3=des2; 2222c3okies=GOO4COOKIE\r\n")
+    assert actual.__contains__(b"Set-Cookie: cookie1=des1\r\nSet-Cookie: 2222cookies=GOODCOOKIE\r\nSet-Cookie: cookie3=des2\r\nSet-Cookie: 2222c3okies=GOO4COOKIE\r\n")
 
     res.json({"Will it overwrite?":"I don't know"})
     actual = res.to_data()
@@ -172,6 +162,13 @@ def test_final():
     assert not actual.__contains__(b"text/plain")
     assert not actual.__contains__(b"hello y'all")
 
+def test_cookies2():
+    res = Response()
+    res.cookies({"One": "two", "3":"4"})
+    res.cookies({"five": "six", "seven":"8"})
+    actual = res.to_data()
+    print(actual)
+    assert actual.__contains__(b"\r\nSet-Cookie: One=two\r\nSet-Cookie: 3=4\r\nSet-Cookie: five=six\r\nSet-Cookie: seven=8\r\n")
 
 
 if __name__ == '__main__':
@@ -180,4 +177,5 @@ if __name__ == '__main__':
     test_overwrite()
     test_cookies()
     test_final()
+    test_cookies2()
 
