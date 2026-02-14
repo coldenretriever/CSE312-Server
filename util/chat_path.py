@@ -16,12 +16,21 @@ def chat_path(request, handler):
         res.cookies({"session":user_cookie})
         res.text("message sent")
 
-        chat_collection.insert_one({"messages": [{"author": user_cookie, "id": uuid.uuid1(), "content": res.body[12:], "updated": False}]})
+        #read the json request
+        #add to the databse with
+        #  -unique message id
+        #  -author
 
 
 
     elif request.method == "GET":
-        a = True
+
+        #read the get request
+        #find the entries in the database
+        #return them in the json format
+        #each dictionary entry is one message
+
+         = True
         for key in request.cookies.keys():
             if key.__contains__("session"):
                 a = False
