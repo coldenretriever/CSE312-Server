@@ -86,7 +86,7 @@ class Response:
         #   Content-Length
         #   No-Sniff
         if isinstance(str(len(self.body)), str):
-            dat = dat + b"Content-Length: " + str(len(self.body.decode("utf-8"))).encode("utf-8") + b"\r\n"
+            dat = dat + b"Content-Length: " + str(len(self.body)).encode("utf-8") + b"\r\n"
         dat = dat + b"\r\n"
         dat = dat + self.body
 

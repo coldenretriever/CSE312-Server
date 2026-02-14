@@ -8,7 +8,7 @@ def host_path(request, handler):
         path = "public/index.html"
     try:
         print(path)
-        with open(path, "rb") as f:
+        with open("./" + path, "rb") as f:
             file_bytes = f.read()
         res.bytes(file_bytes)
     except FileNotFoundError:(
