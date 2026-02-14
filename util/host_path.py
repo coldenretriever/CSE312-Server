@@ -43,8 +43,11 @@ def host_path(request, handler):
         handler.request.sendall(res.to_data())
         return
 
-
-
+    if path.startswith("/api"):
+        res.text("not found")
+        res.set_status(404, "Not Found")
+        handler.request.sendall(res.to_data())
+        return
     #INDEX.HTML
     #if path == "/" or path == "/chat":
     if path.startswith("/"):
