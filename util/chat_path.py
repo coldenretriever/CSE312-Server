@@ -15,8 +15,13 @@ def chat_path(request, handler):
         user_cookie = str(uuid.uuid1())
         res.cookies({"session":user_cookie})
         res.text("message sent")
-        chat_collection.insert_one({"messages": [{"author": user_cookie, "id": uuid.uuid1(), "content": res.body, "updated": False}]})
-        print("got to chat path")
+        try:
+            result = chat_collection.insert_one({"messages": [{"author": user_cookie, "id": uuid.uuid1(), "content": res.body[12:], "updated": False}]})
+            print("got to chat path")
+        except Exception as e:
+            print("error", e)
+
+
 
     elif request.method == "GET":
         a = True
@@ -38,10 +43,11 @@ def chat_path(request, handler):
         message = chat_collection.find({"id":id})
         if dumps(list(message)).__contains__(request.cookies["session"]):
             chat_collection.update_one({"id":id}, {'updated':True})
-            chat_collection.update_one({"id":id}, {'content': request.body[13:]})
+            chat_collection.update_one({"id":id}, {'content': request.body[12:]})
 
 
     #elif request.method == "DELETE":
 
 
+    print("sending response")
     handler.request.sendall(res.to_data())

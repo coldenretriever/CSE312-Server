@@ -28,9 +28,14 @@ def host_path(request, handler):
         print("IIIIII")
         try:
             print(path)
-            with open("./" + path, "rb") as f:
-                file_bytes = f.read()
-            res.bytes(file_bytes)
+            if path.__contains__(".js"):
+                with open("./" + path, "r", encoding="utf-8") as f:
+                    file_bytes = f.read()
+                res.text(file_bytes)
+            else:
+                with open("./" + path, "rb") as f:
+                    file_bytes = f.read()
+                res.bytes(file_bytes)
         except FileNotFoundError:
             (
                 print("file not found"))

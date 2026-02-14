@@ -20,6 +20,7 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
 
         self.router.add_route("GET", "/api/chats", chat_path, False)
         self.router.add_route("GET", "/public", host_path, False)
+
         self.router.add_route("GET", "/", host_path, False)
         self.router.add_route("GET", "/chat", chat_path, False)
 
