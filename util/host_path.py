@@ -7,8 +7,12 @@ def host_path(request, handler):
 
 
     #INDEX.HTML
-    if path == "/":
-        path = "./public/index.html"
+    if path == "/" or path == "/chat":
+        if path == "/":
+            path = "./public/index.html"
+        elif path == "/chat":
+            path = "./public/chat.html"
+
         with open("./public/layout/layout.html", "r", encoding="utf-8") as f:
             layout = f.read()
         with open(path, "r", encoding="utf-8") as f:
@@ -24,9 +28,11 @@ def host_path(request, handler):
         handler.request.sendall(res.to_data())
 
 
-    #CHAT.HTML
-    elif path == "/chat":
-        path = "./public/chat.html"
+
+
+
+
+
     try:
         print(path)
         with open("./" + path, "rb") as f:
