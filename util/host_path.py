@@ -7,11 +7,21 @@ def host_path(request, handler):
 
 
     #INDEX.HTML
-    if path == "/" or path == "/chat":
+    #if path == "/" or path == "/chat":
+    if path.startswith("/"):
         if path == "/":
             path = "./public/index.html"
         elif path == "/chat":
             path = "./public/chat.html"
+        else:
+            path = "./public" + path + ".html"
+
+        # if path == "/":
+        #     path = "./public/index.html"
+        # elif path == "/chat":
+        #     path = "./public/chat.html"
+        #elif path == "/settings":
+            #path =
 
         with open("./public/layout/layout.html", "r", encoding="utf-8") as f:
             layout = f.read()

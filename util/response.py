@@ -150,7 +150,11 @@ def test_overwrite():
 def test_cookies():
     res = Response()
     res.cookies({"Is":"there", "a":"space"})
-    print(res.to_data())
+    res.bytes(b"\r\n\r\nThere all all of these characters")
+    actual = res.to_data()
+    print(actual)
+    assert actual.__contains__(b"space")
+    assert actual.__contains__(b"\r\n\r\nThere all all of these characters")
 
 if __name__ == '__main__':
     test1()
