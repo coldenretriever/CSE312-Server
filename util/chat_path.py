@@ -28,9 +28,8 @@ def chat_path(request, handler):
         #read the get request
         #find the entries in the database
         #return them in the json format
-        #each dictionary entry is one message
-
-         = True
+        #each is dict for 1 message
+        a = True
         for key in request.cookies.keys():
             if key.__contains__("session"):
                 a = False
