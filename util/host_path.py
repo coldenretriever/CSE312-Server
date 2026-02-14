@@ -6,6 +6,8 @@ def host_path(request, handler):
     path = request.path
     b = True
 
+    print(path)
+    print(path.__contains__(".gif"))
     if path.__contains__(".js"):
         res.head["Content-Type"] = "text/javascript"
     elif path.__contains__(".jpg"):
@@ -15,6 +17,7 @@ def host_path(request, handler):
     elif path.__contains__(".webp"):
         res.head["Content-Type"] = "image/webp"
     elif path.__contains__(".gif"):
+        print("got in with: " + path)
         res.head["Content-Type"] = "image/gif"
     elif path.__contains__(".json"):
         res.head["Content-Type"] = "application/json"
@@ -22,6 +25,7 @@ def host_path(request, handler):
         b = False
 
     if b:
+        print("IIIIII")
         try:
             print(path)
             with open("./" + path, "rb") as f:
@@ -32,12 +36,14 @@ def host_path(request, handler):
                 print("file not found"))
 
         handler.request.sendall(res.to_data())
+        return
 
 
 
     #INDEX.HTML
     #if path == "/" or path == "/chat":
     if path.startswith("/"):
+        print("entered html with : " + path)
         if path == "/":
             path = "./public/index.html"
         elif path == "/chat":
@@ -57,7 +63,7 @@ def host_path(request, handler):
         with open(path, "r", encoding="utf-8") as f:
             contents = f.read()
 
-        print(layout)
+        #print(layout)
         idx = layout.index("{{content}}")
         layout = layout[0:idx] + contents + layout[idx:0]
 
