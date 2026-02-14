@@ -16,9 +16,10 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
         #self.router.add_route("GET", "/hello", hello_path, True)
         # TODO: Add your routes here
         #self.router.add_route("GET", "/hello", long_path, False)
-        self.router.add_route("POST", "/api/chats", chat_path, False)
 
+        self.router.add_route("POST", "/api/chats", chat_path, False)
         self.router.add_route("GET", "/api/chats", chat_path, False)
+
         self.router.add_route("GET", "/public", host_path, False)
 
         self.router.add_route("GET", "/", host_path, False)

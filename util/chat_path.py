@@ -15,11 +15,11 @@ def chat_path(request, handler):
         user_cookie = str(uuid.uuid1())
         res.cookies({"session":user_cookie})
         res.text("message sent")
-        try:
-            result = chat_collection.insert_one({"messages": [{"author": user_cookie, "id": uuid.uuid1(), "content": res.body[12:], "updated": False}]})
-            print("got to chat path")
-        except Exception as e:
-            print("error", e)
+
+        #TYPO ALERT
+        #REQUEST ON WEBSITE UNDER GET
+        #SHOULD BE A RESPONSE
+        chat_collection.insert_one({"messages": [{"author": user_cookie, "id": uuid.uuid1(), "content": res.body[12:], "updated": False}]})
 
 
 
