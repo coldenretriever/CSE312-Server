@@ -6,6 +6,8 @@ def host_path(request, handler):
     path = request.path
     if path == "/":
         path = "public/index.html"
+    elif path == "/chat":
+        path = "public/chat.html"
     try:
         print(path)
         with open("./" + path, "rb") as f:
@@ -13,8 +15,6 @@ def host_path(request, handler):
         res.bytes(file_bytes)
     except FileNotFoundError:(
         print("file not found"))
-
-
 
     if path.__contains__("html"):
         res.head["Content-Type"] = "text/html"
@@ -30,9 +30,6 @@ def host_path(request, handler):
         res.head["Content-Type"] = "image/gif"
     elif path.__contains__(".json"):
         res.head["Content-Type"] = "application/json"
-
-
-
 
 
     handler.request.sendall(res.to_data())

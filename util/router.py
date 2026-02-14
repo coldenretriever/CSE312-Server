@@ -1,3 +1,5 @@
+from util.chat_path import chat_path
+from util.host_path import host_path
 from util.response import Response
 
 
@@ -13,11 +15,7 @@ class Router:
     def route_request(self, request, handler):
 
         print("got through with: " + request.path)
-        #Loop through all in dictionary I think
-        #compare path to keys with startswith
 
-
-        #HAVE TO ADD EXACT PATH CONDITION
         for key in self.routes.keys():
             if key[0] == request.method and (key[1] == request.path or (request.path.startswith(key[1]))):# and self.routes[key]["exact_path"] == False)):
                 print(request.path + "_________")
