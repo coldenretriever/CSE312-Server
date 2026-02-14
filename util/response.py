@@ -51,12 +51,6 @@ class Response:
         return self
 
     def json(self, data):
-        #I have to interpret the string/dict
-        #format it into json format
-        #then encode in utf-8 to bytes
-        #set to body
-        #change Content-Type header to application/json
-
         json_string = json.dumps(data)
         bytes_json = json_string.encode("utf-8")
         self.body = bytes_json
@@ -65,31 +59,30 @@ class Response:
         return self
 
     def to_data(self):
-        #SET NO-SNIFF HEADER
+        data = b""
+
+        #status line
+        data = data.__add__(self.http_version.encode("utf-8"))
+        data = data.__add__(b" " + str(self.status_code).encode("utf-8"))
+        data = data.__add__(b" " + self.status_message.encode("utf-8") + b"\r\n")
+
+        #headers
+        self.head["Content-Length"] = str(len(self.body))
+        for key in self.head.keys():
+            #print(self.head[key])
+            data = data.__add__(key.encode("utf-8") + b": " + self.head[key].encode("utf-8") + b"\r\n")
 
 
-        if isinstance(self.http_version, str):
-            self.http_version = self.http_version.encode("utf-8")
-        if isinstance(self.status_message, str):
-            self.status_message = self.status_message.encode("utf-8")
 
-        dat = b""
-        dat = self.http_version + b" " + str(self.status_code).encode("utf-8") + b" " + self.status_message + b"\r\n"
+        data = data.__add__(b"\r\n")
+
+        #body
+        data = data.__add__(self.body)
+
+        return data
 
 
-        for key in list(self.head.keys()):
 
-            if isinstance(key, str) and isinstance(self.head[key], str):
-                dat = dat + key.encode("utf-8") + b": " + self.head[key].encode("utf-8") + b"\r\n"
-        #need to add
-        #   Content-Length
-        #   No-Sniff
-        if isinstance(str(len(self.body)), str):
-            dat = dat + b"Content-Length: " + str(len(self.body)).encode("utf-8") + b"\r\n"
-        dat = dat + b"\r\n"
-        dat = dat + self.body
-
-        return dat
 
 
 
