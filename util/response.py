@@ -11,10 +11,10 @@ class Response:
         self.status_message = "OK"
         self.head = {}
         self.body = b""
+        self.cookList = []
 
         self.head["Content-Type"] = "text/plain; charset=utf-8"
         self.head["X-Content-Type-Options"] = "nosniff"
-        self.cookie_yet = False
 
 
     def set_status(self, code, text):
@@ -29,16 +29,15 @@ class Response:
 
 
     def cookies(self, cookies):
+        cookie_yet = False
+        entry = ""
         for key in list(cookies.keys()):
-            if not self.cookie_yet:
-                self.head["Set-Cookie"] = ""
+            if cookie_yet:
+                entry = entry + "; "
 
-            if self.cookie_yet:
-                self.head["Set-Cookie"] = self.head["Set-Cookie"] + "; "
-
-            self.head["Set-Cookie"] = (self.head["Set-Cookie"] + key + "=" + cookies[key])
-            self.cookie_yet = True
-
+            entry = entry + key + "=" + cookies[key]
+            cookie_yet = True
+        self.cookList.append(entry)
         return self
 
     def bytes(self, data):
@@ -69,10 +68,11 @@ class Response:
         #headers
         self.head["Content-Length"] = str(len(self.body))
         for key in self.head.keys():
-            #print(self.head[key])
             data = data.__add__(key.encode("utf-8") + b": " + self.head[key].encode("utf-8") + b"\r\n")
 
-
+        #cookies
+        for i in range(len(self.cookList)):
+            data = data.__add__(b"Set-Cookie: " + self.cookList[i].encode("utf-8") + b"\r\n")
 
         data = data.__add__(b"\r\n")
 
@@ -159,11 +159,10 @@ def test_final():
     assert actual.__contains__(b"566 this is an important one\r\n")
     assert actual.__contains__(b"HTTP/1.1")
     assert actual.__contains__(b"One: Two\r\n")
-    #assert actual.__contains__(b"One: Aight\r\n")
     assert actual.__contains__(b"Banana: Sprinkled Donut\r\n")
     assert actual.__contains__(b"supercalifragilistic")
     assert actual.__contains__(b"hello y'all")
-    assert actual.__contains__(b"Set-Cookie: cookie1=des1; 2222cookies=GOODCOOKIE; cookie3=des2; 2222c3okies=GOO4COOKIE\r\n")
+    assert actual.__contains__(b"Set-Cookie: cookie1=des1; 2222cookies=GOODCOOKIE\r\nSet-Cookie: cookie3=des2; 2222c3okies=GOO4COOKIE\r\n")
 
     res.json({"Will it overwrite?":"I don't know"})
     actual = res.to_data()
