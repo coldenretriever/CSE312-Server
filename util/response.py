@@ -47,8 +47,7 @@ class Response:
 
     def text(self, data):
         if isinstance(data, str):
-            data = data.encode("utf-8")
-            self.body = self.body + data
+            self.bytes(data.encode("utf-8"))
         return self
 
     def json(self, data):
@@ -91,10 +90,6 @@ class Response:
         dat = dat + self.body
 
         return dat
-
-
-
-
 
 
 
@@ -156,9 +151,41 @@ def test_cookies():
     assert actual.__contains__(b"space")
     assert actual.__contains__(b"\r\n\r\nThere all all of these characters")
 
+def test_final():
+    res = Response()
+    res.set_status(566, "this is an important one")
+    res.headers({"One":"Aight"})
+    res.headers({"One": "Two", "Banana": "Sprinkled Donut"})
+    res.bytes(b"supercalifragilistic")
+    res.text("hello y'all")
+    res.cookies({"cookie1":"des1", "2222cookies":"GOODCOOKIE"})
+    res.cookies({"cookie3":"des2", "2222c3okies":"GOO4COOKIE"})
+
+    actual = res.to_data()
+    print(actual)
+    assert actual.__contains__(b"566 this is an important one\r\n")
+    assert actual.__contains__(b"HTTP/1.1")
+    assert actual.__contains__(b"One: Two\r\n")
+    #assert actual.__contains__(b"One: Aight\r\n")
+    assert actual.__contains__(b"Banana: Sprinkled Donut\r\n")
+    assert actual.__contains__(b"supercalifragilistic")
+    assert actual.__contains__(b"hello y'all")
+    assert actual.__contains__(b"Set-Cookie: cookie1=des1; 2222cookies=GOODCOOKIE; cookie3=des2; 2222c3okies=GOO4COOKIE\r\n")
+
+    res.json({"Will it overwrite?":"I don't know"})
+    actual = res.to_data()
+    print(actual)
+    assert actual.__contains__(b"Will it overwrite?")
+    assert actual.__contains__(b"application/json")
+    assert not actual.__contains__(b"text/plain")
+    assert not actual.__contains__(b"hello y'all")
+
+
+
 if __name__ == '__main__':
     test1()
     test2()
     test_overwrite()
     test_cookies()
+    test_final()
 
