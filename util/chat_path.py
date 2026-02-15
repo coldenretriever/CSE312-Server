@@ -10,18 +10,20 @@ def chat_path(request, handler):
     db = mongo_client["cse312"]
     chat_collection = db["chat"]
     res = Response()
+    dir = "; HttpOnly"
     if request.method == "POST":
         print("first message")
         if not "session" in request.cookies.keys():
             user_cookie = str(uuid.uuid1())
         else:
             user_cookie = request.cookies["session"]
-        res.cookies({"session":user_cookie})
+        res.cookies({"session":user_cookie + dir})
         res.text("message sent")
         body = json.loads(request.body.decode("utf-8"))
         body["content"] = body["content"].replace("&", "&amp")
         body["content"] = body["content"].replace("<", "&lt")
         body["content"] = body["content"].replace(">", "&gt")
+
         #print(body["content"])
 
         print("names")
@@ -48,7 +50,7 @@ def chat_path(request, handler):
             request.cookies["session"] = user_cookie
 
         user_id = request.cookies["session"]
-        res.cookies({"session":user_id})
+        res.cookies({"session":user_id + dir})
         print(user_id)
         message_list = []
         all_messages = chat_collection.find({})
@@ -74,7 +76,7 @@ def chat_path(request, handler):
             user_cookie = str(uuid.uuid1())
         else:
             user_cookie = request.cookies["session"]
-        res.cookies({"session":user_cookie})
+        res.cookies({"session":user_cookie + dir})
         user_id = request.cookies["session"]
         entry = chat_collection.find({"message_id":id})
         for d in entry:
@@ -126,9 +128,8 @@ def chat_path(request, handler):
             user_cookie = str(uuid.uuid1())
         else:
             user_cookie = request.cookies["session"]
-        res.cookies({"session":user_cookie})
+        res.cookies({"session":user_cookie + dir})
         user_id = request.cookies["session"]
-        res.cookies({"session":user_id})
         entry = chat_collection.find({"message_id": id})
         for d in entry:
 
