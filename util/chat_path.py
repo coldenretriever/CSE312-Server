@@ -3,6 +3,7 @@ from util.response import Response
 from pymongo import MongoClient
 import uuid
 from bson.json_util import dumps
+import json
 
 
 def chat_path(request, handler):
@@ -15,6 +16,10 @@ def chat_path(request, handler):
         user_cookie = str(uuid.uuid1())
         res.cookies({"session":user_cookie})
         res.text("message sent")
+        body = json.loads(request.body.decode("utf-8"))
+        print(body)
+
+        chat_collection.insert_one({"author": user_cookie, "message_id": str(uuid.uuid1()), "content": body["content"]})
 
         #read the json request
         #add to the databse with
@@ -29,19 +34,22 @@ def chat_path(request, handler):
         #find the entries in the database
         #return them in the json format
         #each is dict for 1 message
-        a = True
-        for key in request.cookies.keys():
-            if key.__contains__("session"):
-                a = False
-                break
-        if a:
-            user_cookie = str(uuid.uuid1())
-            res.cookies({"session": user_cookie})
-            request.cookies["session"] = user_cookie
+
+        # if a:
+        #     user_cookie = str(uuid.uuid1())
+        #     res.cookies({"session": user_cookie})
+        #     request.cookies["session"] = user_cookie
 
         user_id = request.cookies["session"]
+        print(user_id)
+        message_list = []
         user_data = chat_collection.find({"author": user_id})
-        res.json({"messages": [{"author": str(user_id), "id": str(uuid.uuid1()), "content": dumps(list(user_data)), "updated": False}]})
+        for d in user_data:
+            print(d)
+            #{"messages": [{"author": string, "id": string, "content": string, "updated": boolean}, ...]}
+            message_list.append({"author": d["author"], "id": d["message_id"], "content":d["content"], "updated": False})
+
+            res.json({"messages": message_list})
 
     elif request.method == "PATCH":
         id = request.path[11:]
