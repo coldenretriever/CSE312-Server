@@ -58,7 +58,9 @@ def chat_path(request, handler):
         for d in all_messages:#user_data:
             print(d)
             #{"messages": [{"author": string, "id": string, "content": string, "updated": boolean}, ...]}
-            message_list.append({"author": d["author"], "id": d["message_id"], "content":d["content"], "updated": False})
+            if "message_id" in d.keys() and "content" in d.keys():
+                message_list.append({"author": d["author"], "id": d["message_id"], "content": d["content"], "updated": False})
+
 
 
 
