@@ -28,7 +28,7 @@ def chat_path(request, handler):
 
         print("names")
         print(db.name, chat_collection.name)
-        chat_collection.insert_one({"author": user_cookie, "message_id": str(uuid.uuid1()), "content": body["content"]})
+        chat_collection.insert_one({"author": user_cookie, "message_id": str(uuid.uuid1()), "content": body["content"], "updated":False})
 
 
 
@@ -48,8 +48,8 @@ def chat_path(request, handler):
         for d in all_messages:#user_data:
             print(d)
             #{"messages": [{"author": string, "id": string, "content": string, "updated": boolean}, ...]}
-            if "message_id" in d.keys() and "content" in d.keys():
-                message_list.append({"author": d["author"], "id": d["message_id"], "content": d["content"], "updated": False})
+            if "message_id" in d.keys() and "content" in d.keys() and "updated" in d.keys():
+                message_list.append({"author": d["author"], "id": d["message_id"], "content": d["content"], "updated": d["updated"]})
 
 
         res.json({"messages": message_list})
