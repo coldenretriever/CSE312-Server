@@ -6,6 +6,7 @@ def host_path(request, handler):
     path = request.path
 
     if path.__contains__(".js"):
+        print(path)
         res.head["Content-Type"] = "text/javascript; charset=utf-8"
     elif path.__contains__(".jpg"):
         res.head["Content-Type"] = "image/jpeg"

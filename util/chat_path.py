@@ -67,7 +67,9 @@ def chat_path(request, handler):
         entry = chat_collection.find({"message_id":id})
         for d in entry:
             if not d["author"] == user_id:
+                print("403 FORBIDDEN")
                 res.set_status(403, "Forbidden")
+                res.text("forbidden access")
                 handler.request.sendall(res.to_data())
                 return
 
@@ -94,9 +96,9 @@ def chat_path(request, handler):
         for d in entry:
 
             if not d["author"] == user_id:
-                print("user_id: " + user_id)
-                print(d.values())
+                print("403 FORBIDDEN")
                 res.set_status(403, "Forbidden")
+                res.text("forbidden access")
                 handler.request.sendall(res.to_data())
                 return
 

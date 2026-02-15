@@ -24,8 +24,10 @@ def html_path(request, handler):
 
         # print(layout)
         idx = layout.index("{{content}}")
-        layout = layout[0:idx] + contents + layout[idx:0]
+        layout = layout[0:idx] + contents + layout[idx:]
+        layout = layout.replace("{{content}}", "")
 
+        print(layout)
         # print("goooooooooooooooooooooooooooooal")
         res.text(layout)
         res.head["Content-Type"] = "text/html; charset=utf-8"
