@@ -29,20 +29,10 @@ def chat_path(request, handler):
         print("names")
         print(db.name, chat_collection.name)
         chat_collection.insert_one({"author": user_cookie, "message_id": str(uuid.uuid1()), "content": body["content"]})
-        print("made it")
-        #read the json request
-        #add to the databse with
-        #  -unique message id
-        #  -author
 
 
 
     elif request.method == "GET":
-
-        #read the get request
-        #find the entries in the database
-        #return them in the json format
-        #each is dict for 1 message
 
         if not request.cookies.keys().__contains__("session"):
             user_cookie = str(uuid.uuid1())
@@ -62,18 +52,13 @@ def chat_path(request, handler):
                 message_list.append({"author": d["author"], "id": d["message_id"], "content": d["content"], "updated": False})
 
 
-
-
         res.json({"messages": message_list})
 
     elif request.method == "PATCH":
 
-        #should I have situation for
-        #  -someone accesses without cookie
-        #  -
-        print(request.path)
+        #gets substring after /api/chats/
         id = request.path[11:]
-        print(id)
+
         if not "session" in request.cookies.keys():
             user_cookie = str(uuid.uuid1())
         else:
@@ -94,37 +79,14 @@ def chat_path(request, handler):
         chat_collection.update_one({"message_id":id}, {"$set":{"content":body["content"]}})
         chat_collection.update_one({"message_id":id}, {"$set":{"updated":True}})
         res.text("change successful")
-        #correctly format this
 
 
-        #should I have situation for
-        #  -someone accesses without cookie
-        #  -
-        # print(request.path)
-        # id = request.path[11:]
-        # print(id)
-        #
-        # user_id = request.cookies["session"]
-        # entry = chat_collection.find({"message_id":id})
-        # for d in entry:
-        #     if not user_id in d.keys():
-        #         res.set_status(403, "Forbidden")
-        #         handler.request.sendall(res.to_data())
-        #         return
-        #
-        # body = json.loads(request.body.decode("utf-8"))
-        # body["content"] = body["content"].replace("&", "&amp")
-        # body["content"] = body["content"].replace("<", "&lt")
-        # body["content"] = body["content"].replace(">", "&gt")
-        # chat_collection.update_one({"message_id":id}, {"$set":{"content":body["content"]}})
-        # chat_collection.update_one({"message_id":id}, {"$set":{"updated":True}})
-        # res.text("change successful")
-        #correctly format this
+
+
 
     elif request.method == "DELETE":
-        print(request.path)
+        #gets substring after /api/chats/
         id = request.path[11:]
-        print(id)
 
         if not "session" in request.cookies.keys():
             user_cookie = str(uuid.uuid1())
@@ -141,13 +103,8 @@ def chat_path(request, handler):
                 res.set_status(403, "Forbidden")
                 handler.request.sendall(res.to_data())
                 return
-        for d in chat_collection.find({}):
-            print(d)
-            print("/////")
+
         chat_collection.delete_one({"message_id":id})
-        for d in chat_collection.find({}):
-            print(d)
-            print("/////")
         res.text("deletion successful")
         print("deletion successful")
     #print("sending response")
