@@ -15,7 +15,6 @@ def host_path(request, handler):
     elif path.__contains__(".webp"):
         res.head["Content-Type"] = "image/webp"
     elif path.__contains__(".gif"):
-        print("got in with: " + path)
         res.head["Content-Type"] = "image/gif"
     elif path.__contains__(".json"):
         res.head["Content-Type"] = "application/json"

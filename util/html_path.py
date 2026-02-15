@@ -28,7 +28,7 @@ def html_path(request, handler):
 
         # print("goooooooooooooooooooooooooooooal")
         res.text(layout)
-        res.head["Content-Type"] = "text/html"
+        res.head["Content-Type"] = "text/html; charset=utf-8"
         handler.request.sendall(res.to_data())
 
 
