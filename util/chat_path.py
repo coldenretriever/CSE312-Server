@@ -77,6 +77,7 @@ def chat_path(request, handler):
             if not d["author"] == user_id:
                 res.set_status(403, "Forbidden")
                 handler.request.sendall(res.to_data())
+                return
 
         body = json.loads(request.body.decode("utf-8"))
         chat_collection.update_one({"message_id":id}, {"$set":{"content":body["content"]}})
