@@ -66,10 +66,9 @@ def chat_path(request, handler):
         user_id = request.cookies["session"]
         entry = chat_collection.find({"message_id":id})
         for d in entry:
-            for key in d.keys():
-                if not user_id == key:
-                    res.set_status(403, "Forbidden")
-                    handler.request.sendall(res.to_data())
+            if not user_id in d.keys():
+                res.set_status(403, "Forbidden")
+                handler.request.sendall(res.to_data())
 
         body = json.loads(request.body.decode("utf-8"))
         chat_collection.update_one({"message_id":id}, {"$set":{"content":body["content"]}})

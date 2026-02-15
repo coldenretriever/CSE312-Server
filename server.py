@@ -25,9 +25,8 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
 
 
         self.router.add_route("GET", "/public", host_path, False)
-
         self.router.add_route("GET", "/", host_path, False)
-        self.router.add_route("GET", "/chat", chat_path, False)
+        self.router.add_route("GET", "/chat", host_path, False)
 
 
         super().__init__(request, client_address, server)
