@@ -13,11 +13,14 @@ def chat_path(request, handler):
     res = Response()
     if request.method == "POST":
         print("first message")
-        user_cookie = str(uuid.uuid1())
+        if not "session" in request.cookies.keys():
+            user_cookie = str(uuid.uuid1())
+        else:
+            user_cookie = request.cookies["session"]
         res.cookies({"session":user_cookie})
         res.text("message sent")
         body = json.loads(request.body.decode("utf-8"))
-        print(body)
+        print(body["content"])
 
         chat_collection.insert_one({"author": user_cookie, "message_id": str(uuid.uuid1()), "content": body["content"]})
 
@@ -41,6 +44,7 @@ def chat_path(request, handler):
         #     request.cookies["session"] = user_cookie
 
         user_id = request.cookies["session"]
+        res.cookies({"session":user_id})
         print(user_id)
         message_list = []
         user_data = chat_collection.find({"author": user_id})
