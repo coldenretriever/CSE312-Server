@@ -13,7 +13,7 @@ class Request:
         self.headers = {}
         self.cookies = {}
 
-        print(request)
+        #print(request)
 
         prev, self.body = request.split(b"\r\n\r\n", 1)
         prev = prev.decode("utf-8")

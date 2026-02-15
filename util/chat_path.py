@@ -41,17 +41,17 @@ def chat_path(request, handler):
 
         user_id = request.cookies["session"]
         res.cookies({"session":user_id + dir})
-        print(user_id)
+        #print(user_id)
         message_list = []
         all_messages = chat_collection.find({})
-        user_data = chat_collection.find({"author": user_id})
         for d in all_messages:#user_data:
-            print(d)
+            #print(d)
             #{"messages": [{"author": string, "id": string, "content": string, "updated": boolean}, ...]}
             if "message_id" in d.keys() and "content" in d.keys() and "updated" in d.keys():
                 message_list.append({"author": d["author"], "id": d["message_id"], "content": d["content"], "updated": d["updated"]})
 
 
+        print(str(len(message_list)) + " length")
         res.json({"messages": message_list})
 
     elif request.method == "PATCH":
@@ -60,11 +60,10 @@ def chat_path(request, handler):
         id = request.path[11:]
 
         if not "session" in request.cookies.keys():
-            user_cookie = str(uuid.uuid1())
+            user_id = str(uuid.uuid1())
         else:
-            user_cookie = request.cookies["session"]
-        res.cookies({"session":user_cookie + dir})
-        user_id = request.cookies["session"]
+            user_id = request.cookies["session"]
+        res.cookies({"session":user_id + dir})
         entry = chat_collection.find({"message_id":id})
         for d in entry:
             if not d["author"] == user_id:
@@ -81,18 +80,15 @@ def chat_path(request, handler):
         res.text("change successful")
 
 
-
-
-
     elif request.method == "DELETE":
         #gets substring after /api/chats/
         id = request.path[11:]
 
         if not "session" in request.cookies.keys():
-            user_cookie = str(uuid.uuid1())
+            user_id = str(uuid.uuid1())
         else:
-            user_cookie = request.cookies["session"]
-        res.cookies({"session":user_cookie + dir})
+            user_id = request.cookies["session"]
+        res.cookies({"session":user_id + dir})
         user_id = request.cookies["session"]
         entry = chat_collection.find({"message_id": id})
         for d in entry:
