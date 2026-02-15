@@ -2,12 +2,11 @@ from util.database import mongo_client
 from util.response import Response
 from pymongo import MongoClient
 import uuid
-from bson.json_util import dumps
 import json
 
 
 def chat_path(request, handler):
-    mongo_client = MongoClient("mongo")
+    mongo_client = MongoClient("localhost")
     db = mongo_client["cse312"]
     chat_collection = db["chat"]
     res = Response()
@@ -26,7 +25,7 @@ def chat_path(request, handler):
         print(body["content"])
 
         chat_collection.insert_one({"author": user_cookie, "message_id": str(uuid.uuid1()), "content": body["content"]})
-
+        print("made it")
         #read the json request
         #add to the databse with
         #  -unique message id
