@@ -90,11 +90,9 @@ def chat_path(request, handler):
             user_id = str(uuid.uuid1())
         else:
             user_id = request.cookies["session"]
-        res.cookies({"session":user_id + dir})
-        user_id = request.cookies["session"]
+        res.cookies({"session": user_id + dir})
         entry = chat_collection.find({"message_id": id})
         for d in entry:
-
             if not d["author"] == user_id:
                 print("403 FORBIDDEN")
                 res.set_status(403, "Forbidden")
