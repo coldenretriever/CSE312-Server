@@ -6,54 +6,41 @@ import json
 
 
 def chat_path(request, handler):
-    mongo_client = MongoClient("localhost")
+    mongo_client = MongoClient("mongo")
     db = mongo_client["cse312"]
     chat_collection = db["chat"]
     res = Response()
     if request.method == "POST":
         print("first message")
         if not "session" in request.cookies.keys():
+            print("making new cookie")
             user_cookie = str(uuid.uuid1())
         else:
             user_cookie = request.cookies["session"]
         res.cookies({"session":user_cookie})
         res.text("message sent")
 
-
-        body = json.loads(request.body)
+        body = json.loads(request.body.decode("utf-8"))
         body["content"] = body["content"].replace("&", "&amp")
         body["content"] = body["content"].replace("<", "&lt")
         body["content"] = body["content"].replace(">", "&gt")
-        #print(body["content"])
-
-        chat_collection.insert_one({"author": user_cookie, "message_id": str(uuid.uuid1()), "content": body["content"]})
+        message_id = str(uuid.uuid4())
+        chat_collection.insert_one({"author": user_cookie, "message_id": message_id, "content": body["content"]})
+        a = chat_collection.find({})
+        for d in a:
+            print(d)
+            print("//////////")
         print("made it")
-        #read the json request
-        #add to the databse with
-        #  -unique message id
-        #  -author
-
-
 
     elif request.method == "GET":
 
-        #read the get request
-        #find the entries in the database
-        #return them in the json format
-        #each is dict for 1 message
 
-        if not request.cookies.keys().__contains__("session"):
-            user_cookie = str(uuid.uuid1())
-            res.cookies({"session": user_cookie})
-            request.cookies["session"] = user_cookie
-
-        user_id = request.cookies["session"]
-        res.cookies({"session":user_id})
-        print(user_id)
         message_list = []
         all_messages = chat_collection.find({})
         for d in all_messages:
-            print(d)
+            print(str(d) + "||||||||||||||||")
+            if not "message_id" in d.keys():
+                print("not in keys")
             #{"messages": [{"author": string, "id": string, "content": string, "updated": boolean}, ...]}
             message_list.append({"author": d["author"], "id": d["message_id"], "content":d["content"], "updated": False})
 
@@ -103,3 +90,4 @@ def chat_path(request, handler):
         res.text("deletion successful")
     #print("sending response")
     handler.request.sendall(res.to_data())
+
