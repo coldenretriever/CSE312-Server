@@ -44,6 +44,7 @@ def host_path(request, handler):
         return
 
     if path.startswith("/api"):
+        print("Improper call")
         res.text("not found")
         res.set_status(404, "Not Found")
         handler.request.sendall(res.to_data())
