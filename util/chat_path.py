@@ -70,7 +70,11 @@ def chat_path(request, handler):
         print(request.path)
         id = request.path[11:]
         print(id)
-
+        if not "session" in request.cookies.keys():
+            user_cookie = str(uuid.uuid1())
+        else:
+            user_cookie = request.cookies["session"]
+        res.cookies({"session":user_cookie})
         user_id = request.cookies["session"]
         entry = chat_collection.find({"message_id":id})
         for d in entry:
@@ -115,7 +119,13 @@ def chat_path(request, handler):
         id = request.path[11:]
         print(id)
 
+        if not "session" in request.cookies.keys():
+            user_cookie = str(uuid.uuid1())
+        else:
+            user_cookie = request.cookies["session"]
+        res.cookies({"session":user_cookie})
         user_id = request.cookies["session"]
+        res.cookies({"session":user_id})
         entry = chat_collection.find({"message_id": id})
         for d in entry:
 
