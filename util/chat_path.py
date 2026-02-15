@@ -6,7 +6,7 @@ import json
 
 
 def chat_path(request, handler):
-    mongo_client = MongoClient("localhost")
+    mongo_client = MongoClient("mongo")
     db = mongo_client["cse312"]
     chat_collection = db["chat"]
     res = Response()
@@ -44,7 +44,7 @@ def chat_path(request, handler):
 
         if not request.cookies.keys().__contains__("session"):
             user_cookie = str(uuid.uuid1())
-            res.cookies({"session": user_cookie})
+            #res.cookies({"session": user_cookie})
             request.cookies["session"] = user_cookie
 
         user_id = request.cookies["session"]
@@ -57,7 +57,7 @@ def chat_path(request, handler):
             #{"messages": [{"author": string, "id": string, "content": string, "updated": boolean}, ...]}
             message_list.append({"author": d["author"], "id": d["message_id"], "content":d["content"], "updated": False})
 
-            res.json({"messages": message_list})
+        res.json({"messages": message_list})
 
     elif request.method == "PATCH":
 
@@ -114,13 +114,20 @@ def chat_path(request, handler):
         user_id = request.cookies["session"]
         entry = chat_collection.find({"message_id": id})
         for d in entry:
+
             if not d["author"] == user_id:
                 print("user_id: " + user_id)
                 print(d.values())
                 res.set_status(403, "Forbidden")
                 handler.request.sendall(res.to_data())
                 return
+        for d in chat_collection.find({}):
+            print(d)
+            print("/////")
         chat_collection.delete_one({"message_id":id})
+        for d in chat_collection.find({}):
+            print(d)
+            print("/////")
         res.text("deletion successful")
         print("deletion successful")
     #print("sending response")
