@@ -56,7 +56,25 @@ def chat_path(request, handler):
             res.json({"messages": message_list})
 
     elif request.method == "PATCH":
-        id = request.path[12:]
+        #should I have situation for
+        #  -someone accesses without cookie
+        #  -
+        print(request.path)
+        id = request.path[11:]
+        print(id)
+
+        user_id = request.cookies["session"]
+        entry = chat_collection.find({"message_id":id})
+        for d in entry:
+            for key in d.keys():
+                if not user_id == key:
+                    res.set_status(403, "Forbidden")
+                    handler.request.sendall(res.to_data())
+
+        body = json.loads(request.body.decode("utf-8"))
+        chat_collection.update_one({"message_id":id}, {"$set":{"content":body["content"]}})
+        chat_collection.update_one({"message_id":id}, {"$set":{"updated":True}})
+        res.text("change successful")
         #correctly format this
 
     #elif request.method == "DELETE":

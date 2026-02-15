@@ -19,6 +19,10 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
 
         self.router.add_route("POST", "/api/chats", chat_path, False)
         self.router.add_route("GET", "/api/chats", chat_path, False)
+        self.router.add_route("PATCH", "/api/chats", chat_path, False)
+        self.router.add_route("DELETE", "/api/chats", chat_path, False)
+
+
 
         self.router.add_route("GET", "/public", host_path, False)
 
