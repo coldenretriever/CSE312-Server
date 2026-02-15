@@ -6,7 +6,7 @@ import json
 
 
 def chat_path(request, handler):
-    mongo_client = MongoClient("mongo")
+    mongo_client = MongoClient("localhost")
     db = mongo_client["cse312"]
     chat_collection = db["chat"]
     res = Response()
@@ -51,11 +51,14 @@ def chat_path(request, handler):
         res.cookies({"session":user_id})
         print(user_id)
         message_list = []
+        all_messages = chat_collection.find({})
         user_data = chat_collection.find({"author": user_id})
-        for d in user_data:
+        for d in all_messages:#user_data:
             print(d)
             #{"messages": [{"author": string, "id": string, "content": string, "updated": boolean}, ...]}
             message_list.append({"author": d["author"], "id": d["message_id"], "content":d["content"], "updated": False})
+
+
 
         res.json({"messages": message_list})
 
