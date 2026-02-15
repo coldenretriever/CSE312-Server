@@ -18,7 +18,9 @@ def chat_path(request, handler):
             user_cookie = request.cookies["session"]
         res.cookies({"session":user_cookie})
         res.text("message sent")
-        body = json.loads(request.body.decode("utf-8"))
+
+
+        body = json.loads(request.body)
         body["content"] = body["content"].replace("&", "&amp")
         body["content"] = body["content"].replace("<", "&lt")
         body["content"] = body["content"].replace(">", "&gt")
@@ -49,8 +51,8 @@ def chat_path(request, handler):
         res.cookies({"session":user_id})
         print(user_id)
         message_list = []
-        user_data = chat_collection.find({"author": user_id})
-        for d in user_data:
+        all_messages = chat_collection.find({})
+        for d in all_messages:
             print(d)
             #{"messages": [{"author": string, "id": string, "content": string, "updated": boolean}, ...]}
             message_list.append({"author": d["author"], "id": d["message_id"], "content":d["content"], "updated": False})
@@ -72,8 +74,8 @@ def chat_path(request, handler):
                 res.set_status(403, "Forbidden")
                 handler.request.sendall(res.to_data())
 
-        body = json.loads(request.body.decode("utf-8"))
-        body["content"] = body["content"].replace("&", "&amp")
+        body = json.loads(request.body)
+        body["content"] = body["content"].replace("&", '&amp')
         body["content"] = body["content"].replace("<", "&lt")
         body["content"] = body["content"].replace(">", "&gt")
         chat_collection.update_one({"message_id":id}, {"$set":{"content":body["content"]}})
@@ -82,17 +84,22 @@ def chat_path(request, handler):
         #correctly format this
 
     elif request.method == "DELETE":
-        print(request.path)
         id = request.path[11:]
-        print(id)
 
         user_id = request.cookies["session"]
         entry = chat_collection.find({"message_id": id})
+        a = True
         for d in entry:
-            if not user_id in d.keys():
-                res.set_status(403, "Forbidden")
-                handler.request.sendall(res.to_data())
+            print("got entry")
+            if d["author"] == user_id:
+                a = False
+        if a:
+            print("sent 403")
+            res.set_status(403, "Forbidden")
+            handler.request.sendall(res.to_data())
+
         chat_collection.delete_one({"message_id":id})
+        print("deleted successfully")
         res.text("deletion successful")
     #print("sending response")
     handler.request.sendall(res.to_data())
