@@ -26,7 +26,7 @@ def host_path(request, handler):
         print("IIIIII")
         try:
             print(path)
-            if path.__contains__(".js"):
+            if path.__contains__(".js") or path.__contains__(".json"):
                 with open("./" + path, "r", encoding="utf-8") as f:
                     file_bytes = f.read()
                 res.text(file_bytes)
