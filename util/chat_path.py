@@ -76,8 +76,18 @@ def chat_path(request, handler):
         res.text("change successful")
         #correctly format this
 
-    #elif request.method == "DELETE":
+    elif request.method == "DELETE":
+        print(request.path)
+        id = request.path[11:]
+        print(id)
 
-
+        user_id = request.cookies["session"]
+        entry = chat_collection.find({"message_id": id})
+        for d in entry:
+            if not user_id in d.keys():
+                res.set_status(403, "Forbidden")
+                handler.request.sendall(res.to_data())
+        chat_collection.delete_one({"message_id":id})
+        res.text("deletion successful")
     print("sending response")
     handler.request.sendall(res.to_data())
