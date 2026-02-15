@@ -56,12 +56,8 @@ def chat_path(request, handler):
             res.json({"messages": message_list})
 
     elif request.method == "PATCH":
-        id = request.path[11:]
-        message = chat_collection.find({"id":id})
-        if dumps(list(message)).__contains__(request.cookies["session"]):
-            chat_collection.update_one({"id":id}, {'updated':True})
-            chat_collection.update_one({"id":id}, {'content': request.body[12:]})
-
+        id = request.path[12:]
+        #correctly format this
 
     #elif request.method == "DELETE":
 
