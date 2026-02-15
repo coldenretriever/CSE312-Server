@@ -20,9 +20,9 @@ def chat_path(request, handler):
         res.cookies({"session":user_cookie + dir})
         res.text("message sent")
         body = json.loads(request.body.decode("utf-8"))
-        body["content"] = body["content"].replace("&", "&amp")
-        body["content"] = body["content"].replace("<", "&lt")
-        body["content"] = body["content"].replace(">", "&gt")
+        body["content"] = body["content"].replace("&", "&amp;")
+        body["content"] = body["content"].replace("<", "&lt;")
+        body["content"] = body["content"].replace(">", "&gt;")
 
         #print(body["content"])
 
@@ -88,9 +88,9 @@ def chat_path(request, handler):
                 return
 
         body = json.loads(request.body.decode("utf-8"))
-        body["content"] = body["content"].replace("&", "&amp")
-        body["content"] = body["content"].replace("<", "&lt")
-        body["content"] = body["content"].replace(">", "&gt")
+        body["content"] = body["content"].replace("&", "&amp;")
+        body["content"] = body["content"].replace("<", "&lt;")
+        body["content"] = body["content"].replace(">", "&gt;")
         chat_collection.update_one({"message_id":id}, {"$set":{"content":body["content"]}})
         chat_collection.update_one({"message_id":id}, {"$set":{"updated":True}})
         res.text("change successful")
