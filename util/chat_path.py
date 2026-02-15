@@ -22,7 +22,7 @@ def chat_path(request, handler):
         body["content"] = body["content"].replace("&", "&amp")
         body["content"] = body["content"].replace("<", "&lt")
         body["content"] = body["content"].replace(">", "&gt")
-        print(body["content"])
+        #print(body["content"])
 
         chat_collection.insert_one({"author": user_cookie, "message_id": str(uuid.uuid1()), "content": body["content"]})
         print("made it")
@@ -40,10 +40,10 @@ def chat_path(request, handler):
         #return them in the json format
         #each is dict for 1 message
 
-        # if a:
-        #     user_cookie = str(uuid.uuid1())
-        #     res.cookies({"session": user_cookie})
-        #     request.cookies["session"] = user_cookie
+        if not request.cookies.keys().__contains__("session"):
+            user_cookie = str(uuid.uuid1())
+            res.cookies({"session": user_cookie})
+            request.cookies["session"] = user_cookie
 
         user_id = request.cookies["session"]
         res.cookies({"session":user_id})
@@ -94,5 +94,5 @@ def chat_path(request, handler):
                 handler.request.sendall(res.to_data())
         chat_collection.delete_one({"message_id":id})
         res.text("deletion successful")
-    print("sending response")
+    #print("sending response")
     handler.request.sendall(res.to_data())
