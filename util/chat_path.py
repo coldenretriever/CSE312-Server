@@ -1,14 +1,15 @@
 from util.database import mongo_client
 from util.response import Response
 from pymongo import MongoClient
+from util.database import chat_collection
 import uuid
 import json
 
 
 def chat_path(request, handler):
-    mongo_client = MongoClient("localhost")
-    db = mongo_client["cse312"]
-    chat_collection = db["chat"]
+    # mongo_client = MongoClient("localhost")
+    # db = mongo_client["cse312"]
+    # chat_collection = db["chat"]
     res = Response()
     dir = "; HttpOnly"
     if request.method == "POST":
@@ -27,7 +28,7 @@ def chat_path(request, handler):
         #print(body["content"])
 
         print("names")
-        print(db.name, chat_collection.name)
+        #print(db.name, chat_collection.name)
         chat_collection.insert_one({"author": user_cookie, "message_id": str(uuid.uuid1()), "content": body["content"], "updated":False})
 
 
