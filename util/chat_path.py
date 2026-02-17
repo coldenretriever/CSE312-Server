@@ -29,7 +29,13 @@ def chat_path(request, handler):
 
         print("names")
         #print(db.name, chat_collection.name)
-        chat_collection.insert_one({"author": user_cookie, "message_id": str(uuid.uuid1()), "content": body["content"], "updated":False, "reactions": {}, "nickname": ""})
+        entry = chat_collection.find({"author" : user_cookie})
+        nickname = ""
+        for d in entry:
+            #"nickname" in d.keys() and
+            if not d["nickname"] == "":
+                nickname = d["nickname"]
+        chat_collection.insert_one({"author": user_cookie, "message_id": str(uuid.uuid1()), "content": body["content"], "updated":False, "reactions": {}, "nickname": nickname})
 
 
 
@@ -48,8 +54,10 @@ def chat_path(request, handler):
         for d in all_messages:#user_data:
             #print(d)
             #{"messages": [{"author": string, "id": string, "content": string, "updated": boolean}, ...]}
-            if "message_id" in d.keys() and "content" in d.keys() and "updated" in d.keys() and "reactions" in d.keys() and "nickname" in d.keys():
-                message_list.append({"author": d["author"], "id": d["message_id"], "content": d["content"], "updated": d["updated"], "reactions": d["reactions"], "nickname": d["nickname"]})
+            #"nickname" in d.keys()
+            #"nickname": d["nickname"]
+            if "message_id" in d.keys() and "content" in d.keys() and "updated" in d.keys() and "reactions" in d.keys():
+                message_list.append({"author": d["author"], "id": d["message_id"], "content": d["content"], "updated": d["updated"], "reactions": d["reactions"]})
 
 
         print(str(len(message_list)) + " length")

@@ -5,7 +5,6 @@ import json
 
 def name_path(request, handler):
     res = Response()
-    id = request.path[14:]
     user_cookie = request.cookies["session"]
 
     body = json.loads(request.body.decode("utf-8"))
