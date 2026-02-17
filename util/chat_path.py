@@ -61,6 +61,7 @@ def chat_path(request, handler):
 
 
         print(str(len(message_list)) + " length")
+        print(message_list)
         res.json({"messages": message_list})
 
     elif request.method == "PATCH":
