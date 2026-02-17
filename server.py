@@ -5,6 +5,7 @@ from util.emote_path import emote_path
 from util.host_path import host_path
 from util.html_path import html_path
 from util.index_path import index_path
+from util.name_path import name_path
 from util.request import Request
 from util.router import Router
 from util.hello_path import hello_path
@@ -24,6 +25,8 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
 
         self.router.add_route("PATCH", "/api/reaction", emote_path, False)
         self.router.add_route("DELETE", "/api/reaction", emote_path, False)
+
+        self.router.add_route("PATCH", "/api/nickname", name_path, False)
 
         self.router.add_route("GET", "/", html_path, True)
         self.router.add_route("GET", "/chat", html_path, True)
