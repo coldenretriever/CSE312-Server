@@ -25,7 +25,7 @@ class Router:
             path = self.paths[i]
             exact_path = self.exact_paths[i]
             if method == request.method and (path == request.path or (request.path.startswith(path) and exact_path == False)):
-                #print("sent " + request.path + " to " + method + " " + path)
+                print("sent " + request.path + " to " + method + " " + path)
                 func = self.actions[i]
                 func(request, handler)
                 return
