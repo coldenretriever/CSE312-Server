@@ -76,6 +76,8 @@ def emote_path(request, handler):
                 reactions[emoji] = l
             #need to properly remove 1 user_cookie
             chat_collection.update_one({"message_id": id}, {"$set": {"reactions": reactions}})
+            print(reactions)
+            print("\\")
 
 
             #chat_collection.delete({"message_id": id})

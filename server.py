@@ -18,6 +18,13 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
         #self.router.add_route("GET", "/hello", hello_path, True)
         # TODO: Add your routes here
 
+        self.router.add_route("GET", "/register", html_path, False)
+        self.router.add_route("GET", "/login", html_path, False)
+        self.router.add_route("GET", "/settings", html_path, False)
+        self.router.add_route("GET", "/search-users", html_path, False)
+
+
+
         self.router.add_route("POST", "/api/chats", chat_path, False)
         self.router.add_route("GET", "/api/chats", chat_path, False)
         self.router.add_route("PATCH", "/api/chats", chat_path, False)
