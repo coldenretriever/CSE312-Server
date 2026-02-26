@@ -27,17 +27,33 @@ def chat_path(request, handler):
         body["content"] = body["content"].replace("<", "&lt;")
         body["content"] = body["content"].replace(">", "&gt;")
 
+        #print(body["content"])
 
+        print("names")
+        #print(db.name, chat_collection.name)
         entry = chat_collection.find({"author" : user_cookie})
+        print(request.cookies)
         b = True
         nickname = ""
-        # if "auth_token" in request.cookies.keys():
-        #     hashed = hashlib.sha256(request.cookies["auth_token"].encode('utf-8')).hexdigest()
-        #     found_user = user_collection.find_one({"auth_token": hashed})
-        #     if found_user:
-        #         b = False
-        #         nickname = found_user["username"]
-        #         print("auth_token found")
+
+        username = ""
+        #/////////////
+        if "auth_token" in request.cookies.keys():
+            print(request.cookies["auth_token"])
+            hashed = hashlib.sha256(request.cookies["auth_token"].encode('utf-8')).hexdigest()
+            good_user = user_collection.find_one({"auth_token": hashed})
+            print(good_user)
+            print('look above')
+            if good_user:
+                b = False
+                username = good_user["username"]
+                print("auth_token found")
+        #//////////////
+
+
+
+
+
         if b:
             nickname = ""
             for d in entry:
@@ -46,13 +62,14 @@ def chat_path(request, handler):
                     nickname = d["nickname"]
 
         print(nickname)
-        chat_collection.insert_one({"author": user_cookie, "message_id": str(uuid.uuid1()), "content": body["content"], "updated":False, "reactions": {}, "nickname": nickname})
+        if username == "":
+            username = user_cookie
+        chat_collection.insert_one({"author": username, "message_id": str(uuid.uuid1()), "content": body["content"], "updated":False, "reactions": {}, "nickname": nickname})
 
 
 
     elif request.method == "GET":
-        print(request.cookies)
-        print("look here")
+
         if not request.cookies.keys().__contains__("session"):
             user_cookie = str(uuid.uuid1())
             #res.cookies({"session": user_cookie})
@@ -67,13 +84,7 @@ def chat_path(request, handler):
             #print(d["reactions"])
             #{"messages": [{"author": string, "id": string, "content": string, "updated": boolean}, ...]}
             if "message_id" in d.keys() and "content" in d.keys() and "updated" in d.keys() and "reactions" in d.keys() and "nickname" in d.keys():
-                author = d["author"]
-                if "auth_token" in request.cookies.keys():
-                    hashed = hashlib.sha256(request.cookies["auth_token"].encode('utf-8')).hexdigest()
-                    found_user = user_collection.find_one({"auth_token": hashed})
-                    if found_user:
-                        author = found_user["username"]
-                message_list.append({"author": author, "id": d["message_id"], "content": d["content"], "updated": d["updated"], "reactions": d["reactions"], "nickname": d["nickname"]})
+                message_list.append({"author": d["author"], "id": d["message_id"], "content": d["content"], "updated": d["updated"], "reactions": d["reactions"], "nickname": d["nickname"]})
 
 
         print(str(len(message_list)) + " length")
