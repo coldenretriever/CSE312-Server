@@ -1,3 +1,5 @@
+import uuid
+
 import bcrypt
 
 from util.auth import extract_credentials, validate_password
@@ -24,6 +26,7 @@ def register(request, handler):
     hashed = bcrypt.hashpw(byte, salt)
 
     user_collection.insert_one({"username":username,
+                               "id": str(uuid.uuid4()),
                                 "hashed": hashed,
                                 "auth_token": None})
 

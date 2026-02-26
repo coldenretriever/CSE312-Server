@@ -1,5 +1,6 @@
 import socketserver
 
+from util.at_me import at_me
 from util.chat_path import chat_path
 from util.emote_path import emote_path
 from util.host_path import host_path
@@ -20,6 +21,8 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
         self.router = Router()
         #self.router.add_route("GET", "/hello", hello_path, True)
         # TODO: Add your routes here
+
+        self.router.add_route("GET", "/api/users/@me", at_me, False)
 
         self.router.add_route("GET", "/logout", logout, False)
 

@@ -66,7 +66,9 @@ def chat_path(request, handler):
         if username == "":
             username = user_cookie
         chat_collection.insert_one({"author": username, "message_id": str(uuid.uuid1()), "content": body["content"], "updated":False, "reactions": {}, "nickname": nickname})
-
+        #E2E test passes when I change username above to be user_cookie
+        #I probably have to change how I store and then
+        #send them in GET
 
 
     elif request.method == "GET":
