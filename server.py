@@ -5,7 +5,10 @@ from util.emote_path import emote_path
 from util.host_path import host_path
 from util.html_path import html_path
 from util.index_path import index_path
+from util.login import login
+from util.logout import logout
 from util.name_path import name_path
+from util.register import register
 from util.request import Request
 from util.router import Router
 from util.hello_path import hello_path
@@ -18,12 +21,15 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
         #self.router.add_route("GET", "/hello", hello_path, True)
         # TODO: Add your routes here
 
+        self.router.add_route("GET", "/logout", logout, False)
+
+        self.router.add_route("POST", "/register", register, False)
+        self.router.add_route("POST", "/login", login, False)
+
         self.router.add_route("GET", "/register", html_path, False)
         self.router.add_route("GET", "/login", html_path, False)
         self.router.add_route("GET", "/settings", html_path, False)
         self.router.add_route("GET", "/search-users", html_path, False)
-
-
 
         self.router.add_route("POST", "/api/chats", chat_path, False)
         self.router.add_route("GET", "/api/chats", chat_path, False)
