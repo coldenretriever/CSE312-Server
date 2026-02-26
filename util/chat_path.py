@@ -1,4 +1,6 @@
-from util.database import mongo_client
+import hashlib
+
+from util.database import mongo_client, user_collection
 from util.response import Response
 from pymongo import MongoClient
 from util.database import chat_collection
@@ -13,7 +15,7 @@ def chat_path(request, handler):
     res = Response()
     dir = "; HttpOnly"
     if request.method == "POST":
-        print("first message")
+        #print("first message")
         if not "session" in request.cookies.keys():
             user_cookie = str(uuid.uuid1())
         else:
@@ -30,11 +32,27 @@ def chat_path(request, handler):
         print("names")
         #print(db.name, chat_collection.name)
         entry = chat_collection.find({"author" : user_cookie})
+        print(request.cookies)
+        b = True
         nickname = ""
-        for d in entry:
-            #"nickname" in d.keys() and
-            if not d["nickname"] == "":
-                nickname = d["nickname"]
+        if "auth_token" in request.cookies.keys():
+            print(request.cookies["auth_token"])
+            hashed = hashlib.sha256(request.cookies["auth_token"].encode('utf-8')).hexdigest()
+            good_user = user_collection.find_one({"auth_token": hashed})
+            print(good_user)
+            print('look above')
+            if good_user:
+                b = False
+                nickname = good_user["username"]
+                print("auth_token found")
+        if b:
+            nickname = ""
+            for d in entry:
+                # "nickname" in d.keys() and
+                if not d["nickname"] == "":
+                    nickname = d["nickname"]
+
+        print(nickname)
         chat_collection.insert_one({"author": user_cookie, "message_id": str(uuid.uuid1()), "content": body["content"], "updated":False, "reactions": {}, "nickname": nickname})
 
 
