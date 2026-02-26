@@ -47,6 +47,7 @@ def chat_path(request, handler):
             if good_user:
                 b = False
                 username = good_user["username"]
+                nickname = good_user["username"]
                 print("auth_token found")
         #//////////////
 
