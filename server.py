@@ -13,6 +13,7 @@ from util.register import register
 from util.request import Request
 from util.router import Router
 from util.hello_path import hello_path
+from util.search import search
 
 
 class MyTCPHandler(socketserver.BaseRequestHandler):
@@ -22,6 +23,7 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
         #self.router.add_route("GET", "/hello", hello_path, True)
         # TODO: Add your routes here
 
+        self.router.add_route("GET", "/api/users/search", search, False)
         self.router.add_route("GET", "/api/users/@me", at_me, False)
 
         self.router.add_route("GET", "/logout", logout, False)
