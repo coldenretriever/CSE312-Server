@@ -14,6 +14,7 @@ from util.request import Request
 from util.router import Router
 from util.hello_path import hello_path
 from util.search import search
+from util.update_profile import update_profile
 
 
 class MyTCPHandler(socketserver.BaseRequestHandler):
@@ -22,6 +23,8 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
         self.router = Router()
         #self.router.add_route("GET", "/hello", hello_path, True)
         # TODO: Add your routes here
+
+        self.router.add_route("POST", "/api/users/settings", update_profile, False)
 
         self.router.add_route("GET", "/api/users/search", search, False)
         self.router.add_route("GET", "/api/users/@me", at_me, False)
