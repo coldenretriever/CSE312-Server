@@ -52,7 +52,7 @@ def chat_path(request, handler):
         message_list = []
         all_messages = chat_collection.find({})
         for d in all_messages:#user_data:
-            print(d["reactions"])
+            #print(d["reactions"])
             #{"messages": [{"author": string, "id": string, "content": string, "updated": boolean}, ...]}
             if "message_id" in d.keys() and "content" in d.keys() and "updated" in d.keys() and "reactions" in d.keys() and "nickname" in d.keys():
                 message_list.append({"author": d["author"], "id": d["message_id"], "content": d["content"], "updated": d["updated"], "reactions": d["reactions"], "nickname": d["nickname"]})

@@ -20,10 +20,10 @@ def emote_path(request, handler):
 
         for d in entry:
             reactions = d["reactions"]
-            print("place")
-            print(d["reactions"])
-            print(reactions)
-            print(d["reactions"].keys())
+            #print("place")
+            #print(d["reactions"])
+            # print(reactions)
+            # print(d["reactions"].keys())
             if emoji in d["reactions"].keys() and d["reactions"][emoji].__contains__(user_cookie):
                 print("403 FORBIDDEN")
                 res.set_status(403, "Forbidden")
@@ -33,19 +33,19 @@ def emote_path(request, handler):
             #if the emoji isn't there yet
             print("two")
             if emoji not in d["reactions"].keys():
-                print(reactions)
+                # print(reactions)
                 reactions[emoji] = [user_cookie]
-                print(reactions)
-                print("took 1")
+                # print(reactions)
+                # print("took 1")
             else:
-                print("before add")
+                # print("before add")
                 l = reactions[emoji]
                 l.append(user_cookie)
                 reactions[emoji] = l
-                print("after add")
-                print("took 2")
-            print("three")
-            print(reactions)
+            #     print("after add")
+            #     print("took 2")
+            # print("three")
+            # print(reactions)
             chat_collection.update_one({"message_id": id}, {"$set": {"reactions": reactions}})
 
         res.text("change successful")
@@ -76,8 +76,8 @@ def emote_path(request, handler):
                 reactions[emoji] = l
             #need to properly remove 1 user_cookie
             chat_collection.update_one({"message_id": id}, {"$set": {"reactions": reactions}})
-            print(reactions)
-            print("\\")
+            # print(reactions)
+            # print("\\")
 
 
             #chat_collection.delete({"message_id": id})
