@@ -9,10 +9,16 @@ def search(request, handler):
     if "user" not in path:
         res.set_status(404, "nothing there")
         handler.request.sendall(res.to_data())
+        return
 
     print(path)
     print("above")
     before, query = path.split("=", 1)
+
+    if query == "":
+        res.set_status(404, "nothing there")
+        handler.request.sendall(res.to_data())
+        return
 
     entries = user_collection.find({})
     for entry in entries:
