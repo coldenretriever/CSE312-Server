@@ -15,7 +15,7 @@ def update_profile(request, handler):
 
     username, password = extract_credentials(request)
 
-    if not validate_password(password) and password != "":
+    if (not validate_password(password) and password != "") or user_collection.find({"username":username}):
         res.set_status(401, "invalid password")
         handler.request.sendall(res.to_data())
         return
