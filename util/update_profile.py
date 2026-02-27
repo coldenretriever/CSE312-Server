@@ -10,13 +10,29 @@ def update_profile(request, handler):
     res = Response()
 
     if "auth_token" not in request.cookies.keys():
-        res.set_status(401, "no credentials")
+        res.set_status(400, "no credentials")
 
 
     username, password = extract_credentials(request)
 
-    if (not validate_password(password) and password != "") or user_collection.find({"username":username}):
-        res.set_status(401, "invalid password")
+    users = user_collection.find({"username":username})
+    count = 0
+    for user in users:
+        count = count + 1
+    #verify that this is the only user with the specific username
+
+    byte = password.encode('utf-8')
+
+    hashed_auth = hashlib.sha256(request.cookies["auth_token"].encode('utf-8')).hexdigest()
+    good_user = user_collection.find_one({"auth_token": hashed_auth})
+    if not good_user:
+        res.set_status(400, "bad credentials")
+        res.json({})
+        handler.request.sendall(res.to_data())
+        return
+
+    if (not validate_password(password) and password != "") or (good_user["username"] == username and count > 1):
+        res.set_status(400, "invalid password")
         handler.request.sendall(res.to_data())
         return
 
@@ -25,7 +41,7 @@ def update_profile(request, handler):
     hashed_auth = hashlib.sha256(request.cookies["auth_token"].encode('utf-8')).hexdigest()
     good_user = user_collection.find_one({"auth_token": hashed_auth})
     if not good_user:
-        res.set_status(401, "bad credentials")
+        res.set_status(400, "bad credentials")
         res.json({})
         handler.request.sendall(res.to_data())
         return
