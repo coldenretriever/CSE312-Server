@@ -104,14 +104,26 @@ def chat_path(request, handler):
         else:
             user_id = request.cookies["session"]
         res.cookies({"session":user_id + dir})
-        entry = chat_collection.find({"message_id":id})
-        for d in entry:
-            if not d["author"] == user_id:
+        entry = chat_collection.find_one({"message_id":id})
+
+        hashed_auth = hashlib.sha256(request.cookies["auth_token"].encode('utf-8')).hexdigest()
+        good_user = user_collection.find_one({"auth_token": hashed_auth})
+
+        if good_user:
+            if not entry["author"] == good_user["username"]:
                 print("403 FORBIDDEN")
                 res.set_status(403, "Forbidden")
                 res.text("forbidden access")
                 handler.request.sendall(res.to_data())
                 return
+        else:
+            if not entry["author"] == user_id:
+                print("403 FORBIDDEN")
+                res.set_status(403, "Forbidden")
+                res.text("forbidden access")
+                handler.request.sendall(res.to_data())
+                return
+
 
         body = json.loads(request.body.decode("utf-8"))
         body["content"] = body["content"].replace("&", "&amp;")
