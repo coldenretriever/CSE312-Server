@@ -36,23 +36,16 @@ def update_profile(request, handler):
         handler.request.sendall(res.to_data())
         return
 
+    print("new password: " + password)
     byte = password.encode('utf-8')
-
-    hashed_auth = hashlib.sha256(request.cookies["auth_token"].encode('utf-8')).hexdigest()
-    good_user = user_collection.find_one({"auth_token": hashed_auth})
-    if not good_user:
-        res.set_status(400, "bad credentials")
-        res.json({})
-        handler.request.sendall(res.to_data())
-        return
-
 
     salt = bcrypt.gensalt()
     hashed_pw = bcrypt.hashpw(byte, salt)
 
     user_collection.update_one({"auth_token": hashed_auth},
                                {"$set": {"username": username}})
-    user_collection.update_one({"auth_token": hashed_auth},
+    if password != "":
+        user_collection.update_one({"auth_token": hashed_auth},
                                {"$set": {"hashed": hashed_pw}})
     handler.request.sendall(res.to_data())
 

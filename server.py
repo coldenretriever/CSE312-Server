@@ -14,6 +14,7 @@ from util.request import Request
 from util.router import Router
 from util.hello_path import hello_path
 from util.search import search
+from util.two_factor import two_factor
 from util.update_profile import update_profile
 
 
@@ -23,6 +24,9 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
         self.router = Router()
         #self.router.add_route("GET", "/hello", hello_path, True)
         # TODO: Add your routes here
+
+        #2FA
+        self.router.add_route("POST", "/api/totp/enable", two_factor, False)
 
         self.router.add_route("POST", "/api/users/settings", update_profile, False)
 
