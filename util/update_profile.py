@@ -13,7 +13,7 @@ def update_profile(request, handler):
         res.set_status(400, "no credentials")
 
 
-    username, password = extract_credentials(request)
+    username, password, totp = extract_credentials(request)
 
     users = user_collection.find({"username":username})
     count = 0

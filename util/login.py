@@ -9,9 +9,8 @@ from util.database import user_collection
 
 def login(request, handler):
     res = Response()
-    path = request.path
 
-    username, password = extract_credentials(request)
+    username, password, totp = extract_credentials(request)
 
     byte = password.encode('utf-8')
     hashed = user_collection.find_one({"username":username})["hashed"]
@@ -19,6 +18,13 @@ def login(request, handler):
     if not hashed or not bcrypt.checkpw(byte, hashed):
         res.set_status(400, "incorrect pw")
         res.text("bad pw bad")
+        handler.request.sendall(res.to_data())
+        return
+
+    entry = user_collection.find_one({"username": username})
+    if entry.keys().__contains__("secret") and totp == "":
+        res.set_status(401, "no totp sent")
+        res.text("no totp sent")
         handler.request.sendall(res.to_data())
         return
 

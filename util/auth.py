@@ -4,10 +4,16 @@ from util.request import Request
 def extract_credentials(request):
     body_bytes = request.body
     body = body_bytes.decode()
+    totp = ""
 
     user_side, password_side = body.split("&", 1)
     pre_user, username = user_side.split("=", 1)
     pre_pass, encoded_password = password_side.split("=", 1)
+
+    if "totpCode" in encoded_password:
+        encoded_password, totp_side = encoded_password.split("&")
+        pre_totp, totp = totp_side.split("=", 1)
+
     password = ''
     num_iterations = len(encoded_password)
     i = 0
@@ -49,7 +55,7 @@ def extract_credentials(request):
     print(username)
     print(password)
 
-    return [username, password]
+    return [username, password, totp]
 
 
 def validate_password(pw):

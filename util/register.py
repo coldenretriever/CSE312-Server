@@ -11,7 +11,7 @@ def register(request, handler):
     res = Response()
     path = request.path
 
-    username, password = extract_credentials(request)
+    username, password, totp = extract_credentials(request)
 
 
     if not validate_password(password) or user_collection.find_one({"username": username}):
