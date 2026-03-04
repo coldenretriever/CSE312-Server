@@ -2,6 +2,7 @@ import hashlib
 import uuid
 
 import bcrypt
+import pyotp
 
 from util.auth import extract_credentials, validate_password
 from util.response import Response
@@ -27,6 +28,13 @@ def login(request, handler):
         res.text("no totp sent")
         handler.request.sendall(res.to_data())
         return
+    elif entry.keys().__contains__("secret") and totp != "":
+        current = pyotp.TOTP(entry["secret"])
+        if not current.verify(totp):
+            res.set_status(401, "no totp sent")
+            res.text("totp invalid")
+            handler.request.sendall(res.to_data())
+            return
 
     auth_string = str(uuid.uuid4())
     res.cookies({"auth_token": auth_string + "; HttpOnly; Max-Age=3600"})
