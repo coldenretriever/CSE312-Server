@@ -1,6 +1,8 @@
 import socketserver
 
 from util.at_me import at_me
+from util.auth_callback import auth_callback
+from util.auth_github import auth_github
 from util.chat_path import chat_path
 from util.emote_path import emote_path
 from util.host_path import host_path
@@ -24,6 +26,12 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
         self.router = Router()
         #self.router.add_route("GET", "/hello", hello_path, True)
         # TODO: Add your routes here
+
+        #Callback URI
+        self.router.add_route("GET", "/authcallback", auth_callback, False)
+
+        #2-AO2
+        self.router.add_route("GET", "/authgithub", auth_github, False)
 
         #2FA
         self.router.add_route("POST", "/api/totp/enable", two_factor, False)
