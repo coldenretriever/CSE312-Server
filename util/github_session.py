@@ -24,4 +24,7 @@ def github_session(login, handler):
                                                             {"auth_token": auth_hash}})
 
     res.text("logged in with github")
+    res.set_status(302, "go to home")
+    res.headers({"Location": "http://localhost:8080"})
+
     handler.request.sendall(res.to_data())

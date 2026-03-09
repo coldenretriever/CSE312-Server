@@ -2,6 +2,8 @@ import json
 
 import requests
 from dotenv import load_dotenv
+
+from util.github_session import github_session
 from util.response import Response
 import os
 load_dotenv()
@@ -30,13 +32,16 @@ def auth_callback(request, handler):
     print("Status67:", a.status_code)
     print("Response:", a.text)
 
-    res = Response()
-    res.set_status(302, "passed everything go back")
-    res.headers({"Location": "http://localhost:8080"})
+    output = json.loads(a.text)
+    github_session(output["login"], handler)
 
-
-    # print(r)
-    # print(r.status_code)
-    # print(r.text)
-
-    handler.request.sendall(res.to_data())
+    # res = Response()
+    # res.set_status(302, "passed everything go back")
+    # res.headers({"Location": "http://localhost:8080"})
+    #
+    #
+    # # print(r)
+    # # print(r.status_code)
+    # # print(r.text)
+    #
+    # handler.request.sendall(res.to_data())
