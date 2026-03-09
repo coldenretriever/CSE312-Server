@@ -1,17 +1,42 @@
+import json
+
+import requests
+from dotenv import load_dotenv
 from util.response import Response
-import request
+import os
+load_dotenv()
 
 def auth_callback(request, handler):
-    res = Response()
-    print(request.path)
+    #print(request.path)
 
+    print("Callback triggered:", request.path)
     pre, code = request.path.split("=", 1)
+    #print(code)
 
-    s = "https://github.com/login/oauth/access_token"
-    #s.__add__('?response_type=code')
-    s.__add__('&client_id=Ov23liVGBkf95tkcUCpu')
-    s.__add('&client_secret=8c94cd25a837d2762939869130ce306135031a3c')
-    s.__add__('&' + code)
-    s.__add__('&redirect_uri=http://localhost:8080/authcallback')
+    client_id = str(os.getenv("GITHUB_CLIENT_ID"))
+    client_secret = str(os.getenv("GITHUB_CLIENT_SECRET"))
 
-    response = request.post(s)
+    url = "https://github.com/login/oauth/access_token"
+
+    print("Sending code:", code)
+    print("Client ID:", client_id)
+    r = requests.post(url, headers={"Accept":"application/json"},data={'client_id': client_id, 'client_secret': client_secret, 'code': code, 'redirect_uri': 'http://localhost:8080/authcallback'})
+    print("Status:", r.status_code)
+    print("Response:", r.text)
+    v = json.loads(r.text)
+    access_token = v["access_token"]
+
+    a = requests.get("https://api.github.com/user", headers={"Authorization": "Bearer " + access_token})
+    print("Status67:", a.status_code)
+    print("Response:", a.text)
+
+    res = Response()
+    res.set_status(302, "passed everything go back")
+    res.headers({"Location": "http://localhost:8080"})
+
+
+    # print(r)
+    # print(r.status_code)
+    # print(r.text)
+
+    handler.request.sendall(res.to_data())
