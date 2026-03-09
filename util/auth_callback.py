@@ -1,4 +1,5 @@
 import json
+import base64
 
 import requests
 from dotenv import load_dotenv
@@ -9,20 +10,22 @@ import os
 load_dotenv()
 
 def auth_callback(request, handler):
-    #print(request.path)
 
-    print("Callback triggered:", request.path)
     pre, code = request.path.split("=", 1)
-    #print(code)
 
     client_id = str(os.getenv("GITHUB_CLIENT_ID"))
     client_secret = str(os.getenv("GITHUB_CLIENT_SECRET"))
+
+    auth_string = client_id + ":" + client_secret
+    auth_bytes = auth_string.encode("utf-8")
+    auth_encoded = base64.b64encode(auth_bytes, altchars=None)
+    auth_toSend = auth_encoded.decode("utf-8")
 
     url = "https://github.com/login/oauth/access_token"
 
     print("Sending code:", code)
     print("Client ID:", client_id)
-    r = requests.post(url, headers={"Accept":"application/json"},data={'client_id': client_id, 'client_secret': client_secret, 'code': code, 'redirect_uri': 'http://localhost:8080/authcallback'})
+    r = requests.post(url, headers={"Accept":"application/json", "Authorization": "Basic " + auth_toSend},data={'code': code, 'redirect_uri': 'http://localhost:8080/authcallback'})
     print("Status:", r.status_code)
     print("Response:", r.text)
     v = json.loads(r.text)
@@ -34,14 +37,3 @@ def auth_callback(request, handler):
 
     output = json.loads(a.text)
     github_session(output["login"], handler)
-
-    # res = Response()
-    # res.set_status(302, "passed everything go back")
-    # res.headers({"Location": "http://localhost:8080"})
-    #
-    #
-    # # print(r)
-    # # print(r.status_code)
-    # # print(r.text)
-    #
-    # handler.request.sendall(res.to_data())
